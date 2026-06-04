@@ -1,6 +1,7 @@
 from faker import Faker
 import random
 import mysql.connector
+from datetime import datetime, timedelta
 
 # Initialize Faker
 fake = Faker()
@@ -9,13 +10,31 @@ fake = Faker()
 conn = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="Ramya@2506",
+    password="PASSWORD_HERE",
     database="fraud_analytics_system"
 )
 
 cursor = conn.cursor()
 
-# Lists for realistic data
+# Locations
+locations = [
+    "Bangalore", "Mysore", "Mumbai", "Delhi",
+    "Hyderabad", "Chennai", "Pune", "Kolkata",
+    "Ahmedabad", "Jaipur", "Lucknow",
+    "Kochi", "Visakhapatnam", "Indore"
+]
+
+# Merchants
+merchants = [
+    "Amazon", "Flipkart", "Myntra", "Ajio", "Nykaa",
+    "Swiggy", "Zomato", "Uber", "Ola", "BookMyShow",
+    "BigBasket", "Reliance Digital", "Croma",
+    "Tata Cliq", "Meesho", "Paytm Mall",
+    "Dominos", "Pizza Hut", "Starbucks",
+    "IRCTC", "MakeMyTrip", "RedBus",
+    "JioMart", "Apollo Pharmacy", "Decathlon"
+]
+
 payment_methods = [
     "UPI",
     "Credit Card",
@@ -28,34 +47,16 @@ transaction_types = [
     "Credit"
 ]
 
-locations = [
-    "Bangalore",
-    "Mumbai",
-    "Delhi",
-    "Hyderabad",
-    "Chennai",
-    "Pune",
-    "Mysore"
-]
-
-merchants = [
-    "Amazon",
-    "Flipkart",
-    "Swiggy",
-    "Zomato",
-    "Myntra",
-    "Paytm",
-    "PhonePe"
-]
-
 devices = [
     "Android",
     "iPhone",
     "Web"
 ]
 
-# Generate 5000 transactions
-for i in range(5000):
+start_date = datetime(2025, 1, 1)
+
+# Generate 10000 transactions
+for i in range(10000):
 
     transaction_id = f"TXN{i+1000}"
 
@@ -63,26 +64,85 @@ for i in range(5000):
 
     mobile_number = fake.msisdn()[:10]
 
-    transaction_amount = round(
-        random.uniform(100, 100000),
-        2
+    # Realistic Amount Distribution
+
+    amount_type = random.choices(
+        ["small", "medium", "large", "very_large"],
+        weights=[60, 25, 10, 5]
+    )[0]
+
+    if amount_type == "small":
+        transaction_amount = round(
+            random.uniform(50, 2000), 2
+        )
+
+    elif amount_type == "medium":
+        transaction_amount = round(
+            random.uniform(2000, 10000), 2
+        )
+
+    elif amount_type == "large":
+        transaction_amount = round(
+            random.uniform(10000, 50000), 2
+        )
+
+    else:
+        transaction_amount = round(
+            random.uniform(50000, 120000), 2
+        )
+
+    payment_method = random.choice(
+        payment_methods
     )
 
-    payment_method = random.choice(payment_methods)
+    transaction_type = random.choice(
+        transaction_types
+    )
 
-    transaction_type = random.choice(transaction_types)
+    # 18 Months Data
 
-    transaction_time = fake.date_time_this_year()
+    transaction_time = (
+        start_date +
+        timedelta(
+            days=random.randint(0, 540),
+            hours=random.randint(0, 23),
+            minutes=random.randint(0, 59)
+        )
+    )
 
-    location = random.choice(locations)
+    # Weighted Locations
 
-    merchant_name = random.choice(merchants)
+    location = random.choices(
+        locations,
+        weights=[
+            20, 10, 18, 16,
+            15, 12, 10, 8,
+            6, 5, 5,
+            4, 4, 3
+        ]
+    )[0]
 
-    device_type = random.choice(devices)
+    # Weighted Merchants
+
+    merchant_name = random.choices(
+        merchants,
+        weights=[
+            18,16,10,8,7,
+            12,12,8,8,6,
+            10,6,5,
+            5,5,4,
+            4,4,3,
+            8,5,4,
+            5,4,3
+        ]
+    )[0]
+
+    device_type = random.choice(
+        devices
+    )
 
     ip_address = fake.ipv4()
 
-    # SQL Query
     query = """
     INSERT INTO transactions
     (
@@ -118,11 +178,9 @@ for i in range(5000):
 
     cursor.execute(query, values)
 
-# Commit Changes
 conn.commit()
 
-print("5000 realistic transactions inserted successfully!")
+print("10000 realistic transactions inserted successfully!")
 
-# Close Connection
 cursor.close()
 conn.close()
