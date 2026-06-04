@@ -493,8 +493,7 @@ elif page == "Fraud Analysis":
         location_risk,
         x="location",
         y="fraud_cases",
-        text="fraud_cases",
-        title="Fraud Hotspots by Location"
+        text="fraud_cases"
     )
 
     st.plotly_chart(
