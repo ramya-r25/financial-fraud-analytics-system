@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from datetime import datetime
 
 # ---------------------------------------------------
@@ -105,10 +106,8 @@ if not st.session_state.logged_in:
 df = pd.read_csv("transactions.csv")
 
 df["transaction_time"] = pd.to_datetime(
-    df["transaction_time"],
-    dayfirst=True
+    df["transaction_time"]
 )
-
 # ---------------------------------------------------
 # FRAUD DETECTION LOGIC
 # ---------------------------------------------------
@@ -145,11 +144,14 @@ def detect_fraud(row):
     # Final Fraud Decision
     if risk_score >= 60:
         fraud_status = "Fraud"
+
+    elif risk_score >= 40:
+        fraud_status = "High Risk"
+
     else:
         fraud_status = "Safe"
 
     return pd.Series([risk_score, fraud_status])
-
 # Apply Fraud Detection
 df[["risk_score", "fraud_status"]] = df.apply(
     detect_fraud,
@@ -175,10 +177,11 @@ st.sidebar.markdown("---")
 page = st.sidebar.radio(
     "Navigation",
     [
-    "Dashboard",
-    "Fraud Analysis",
-    "Transaction Explorer"
-]
+        "Dashboard",
+        "Fraud Analysis",
+        "Transaction Explorer",
+        "Transaction Investigation"
+    ]
 )
 
 payment_filter = st.sidebar.multiselect(
@@ -239,22 +242,28 @@ if page == "Dashboard":
     total_transactions = len(filtered_df)
 
     fraud_cases = len(
-        filtered_df[filtered_df["fraud_status"] == "Fraud"]
+        filtered_df[
+            filtered_df["fraud_status"] == "Fraud"
+        ]
     )
 
     safe_cases = len(
-        filtered_df[filtered_df["fraud_status"] == "Safe"]
+        filtered_df[
+            filtered_df["fraud_status"] == "Safe"
+        ]
+    )
+
+    high_risk = len(
+        filtered_df[
+            filtered_df["fraud_status"] == "High Risk"
+        ]
     )
 
     fraud_percentage = (
         fraud_cases / total_transactions
     ) * 100
 
-    high_risk = len(
-        filtered_df[filtered_df["risk_score"] >= 60]
-    )
-
-    # KPI CARDS
+    # KPI Cards
 
     st.subheader("📊 Dashboard Overview")
 
@@ -278,6 +287,34 @@ if page == "Dashboard":
     col4.metric(
         "Fraud Percentage",
         f"{fraud_percentage:.2f}%"
+    )
+
+    st.markdown("---")
+
+    # Risk Gauge
+
+    st.subheader("🎯 Average Risk Score")
+
+    avg_risk = filtered_df["risk_score"].mean()
+
+    gauge = go.Figure(
+        go.Indicator(
+            mode="gauge+number",
+            value=avg_risk,
+            title={
+                "text": "Average Risk Score"
+            },
+            gauge={
+                "axis": {
+                    "range": [0, 100]
+                }
+            }
+        )
+    )
+
+    st.plotly_chart(
+        gauge,
+        use_container_width=True
     )
 
     st.markdown("---")
@@ -328,15 +365,64 @@ if page == "Dashboard":
         use_container_width=True
     )
 
-    # Location Analysis
+    # Monthly Fraud Trends
 
-    st.subheader("🌍 Fraud Analysis by Location")
+    st.subheader("📊 Monthly Fraud Trends")
 
-    location_chart = px.histogram(
-        filtered_df,
-        x="location",
-        color="fraud_status",
-        title="Location-wise Fraud Distribution"
+    fraud_df = filtered_df[
+        filtered_df["fraud_status"] == "Fraud"
+    ].copy()
+
+    fraud_df["month"] = (
+        fraud_df["transaction_time"]
+        .dt.strftime("%Y-%m")
+    )
+
+    monthly_fraud = (
+        fraud_df.groupby("month")
+        .size()
+        .reset_index(name="fraud_count")
+    )
+
+    monthly_chart = px.line(
+        monthly_fraud,
+        x="month",
+        y="fraud_count",
+        markers=True,
+        title="Monthly Fraud Trend"
+    )
+
+    st.plotly_chart(
+        monthly_chart,
+        use_container_width=True
+    )
+
+     # Transaction Distribution by Location
+
+    st.subheader("🌍 Transactions by Location")
+
+    location_counts = (
+        filtered_df["location"]
+        .value_counts()
+        .reset_index()
+    )
+
+    location_counts.columns = [
+        "location",
+        "transactions"
+    ]
+
+    location_chart = px.bar(
+        location_counts,
+        x="transactions",
+        y="location",
+        orientation="h",
+        text="transactions",
+        title="Transactions by Location"
+    )
+
+    location_chart.update_layout(
+        yaxis={"categoryorder": "total ascending"}
     )
 
     st.plotly_chart(
@@ -344,14 +430,35 @@ if page == "Dashboard":
         use_container_width=True
     )
 
-# ---------------------------------------------------
-# ADD TRANSACTION PAGE
-# ---------------------------------------------------
+    # Top Risky Merchants
 
-# ---------------------------------------------------
-# FRAUD ANALYSIS PAGE
-# ---------------------------------------------------
+    st.subheader("🏪 Top Risky Merchants")
 
+    merchant_risk = (
+        filtered_df[
+            filtered_df["fraud_status"] == "Fraud"
+        ]
+        .groupby("merchant_name")
+        .size()
+        .reset_index(name="fraud_count")
+        .sort_values(
+            "fraud_count",
+            ascending=False
+        )
+        .head(10)
+    )
+
+    merchant_chart = px.bar(
+        merchant_risk,
+        x="merchant_name",
+        y="fraud_count",
+        title="Top Risky Merchants"
+    )
+
+    st.plotly_chart(
+        merchant_chart,
+        use_container_width=True
+    )
 elif page == "Fraud Analysis":
 
     st.title("🚨 Fraud Analysis")
@@ -369,13 +476,25 @@ elif page == "Fraud Analysis":
         use_container_width=True
     )
 
-    st.subheader("Fraud Distribution")
+    st.subheader("📍 Fraud Hotspots by Location")
 
-    fraud_location_chart = px.histogram(
-        high_risk_df,
+    location_risk = (
+        high_risk_df
+        .groupby("location")
+        .size()
+        .reset_index(name="fraud_cases")
+        .sort_values(
+            "fraud_cases",
+            ascending=False
+        )
+    )
+
+    fraud_location_chart = px.bar(
+        location_risk,
         x="location",
-        color="payment_method",
-        title="Fraud Transactions by Location"
+        y="fraud_cases",
+        text="fraud_cases",
+        title="Fraud Hotspots by Location"
     )
 
     st.plotly_chart(
@@ -383,6 +502,7 @@ elif page == "Fraud Analysis":
         use_container_width=True
     )
 
+# ---------------------------------------------------
 # ---------------------------------------------------
 # TRANSACTION EXPLORER PAGE
 # ---------------------------------------------------
@@ -393,12 +513,17 @@ elif page == "Transaction Explorer":
 
     st.markdown("---")
 
+    display_df = filtered_df.sort_values(
+        by="transaction_time",
+        ascending=False
+    )
+
     st.dataframe(
-        filtered_df,
+        display_df,
         use_container_width=True
     )
 
-    csv = filtered_df.to_csv(index=False)
+    csv = display_df.to_csv(index=False)
 
     st.download_button(
         label="📥 Download Transaction Report",
@@ -407,6 +532,42 @@ elif page == "Transaction Explorer":
         mime="text/csv"
     )
 
+# ---------------------------------------------------
+# TRANSACTION INVESTIGATION PAGE
+# ---------------------------------------------------
+
+elif page == "Transaction Investigation":
+
+    st.title("🔎 Transaction Investigation")
+
+    txn_search = st.text_input(
+        "Enter Transaction ID"
+    )
+
+    if txn_search:
+
+        result = df[
+            df["transaction_id"]
+            .astype(str)
+            .str.upper()
+            ==
+            txn_search.upper()
+        ]
+
+        if not result.empty:
+
+            st.success("✅ Transaction Found")
+
+            st.dataframe(
+                result,
+                use_container_width=True
+            )
+
+        else:
+
+            st.error(
+                "❌ Transaction Not Found"
+            )
 # ---------------------------------------------------
 # FOOTER
 # ---------------------------------------------------
