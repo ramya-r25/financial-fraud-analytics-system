@@ -4,46 +4,98 @@
 ![Streamlit](https://img.shields.io/badge/Streamlit-Deployed-red?style=for-the-badge&logo=streamlit)
 ![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-150458?style=for-the-badge&logo=pandas)
 ![Plotly](https://img.shields.io/badge/Plotly-Interactive%20Visualization-3F4F75?style=for-the-badge&logo=plotly)
-![License](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
 
-A web-based **Financial Fraud Analytics System** built with **Python** and **Streamlit** that analyzes financial transactions using a rule-based risk scoring engine. The application identifies suspicious activities, classifies transactions into **Safe**, **High Risk**, and **Fraud**, and presents insights through interactive dashboards for monitoring and investigation.
+## 📖 Overview
+
+The **Financial Fraud Analytics System** is a web-based analytics application built using **Python** and **Streamlit** to identify potentially fraudulent financial transactions through a rule-based risk scoring engine.
+
+The application processes transaction data, assigns risk scores based on predefined business rules, classifies transactions into **Safe**, **High Risk**, and **Fraud**, and presents interactive dashboards for monitoring, investigation, and business reporting.
+
+---
+
+## 🎯 Objectives
+
+- Detect potentially fraudulent financial transactions using rule-based analytics.
+- Calculate transaction risk scores based on predefined business rules.
+- Visualize fraud trends through interactive dashboards.
+- Enable efficient transaction investigation using search and filtering.
+- Demonstrate practical data analytics and dashboard development using Python.
+
+---
+
+## 🛠 Tech Stack
+
+- **Python**
+- **Streamlit**
+- **Pandas**
+- **Plotly**
+- **MySQL**
+- **Faker**
+- **Git & GitHub**
+- **Streamlit Community Cloud**
 
 ---
 
 ## 🌐 Live Demo
 
-**Streamlit Application**
+**Try the application here:**
 
 🔗 https://financial-fraud-analytics.streamlit.app/
 
 ---
 
-# ✨ Features
+## 📂 Repository Structure
 
-- 🔐 Secure Login System
-- 🧠 Rule-Based Fraud Detection Engine
-- 🎯 Risk Score Calculation
-- 🚨 Fraud & High-Risk Transaction Detection
-- 📊 Interactive Analytics Dashboard
-- 📈 Monthly Fraud Trend Analysis
-- 🌍 Transaction Distribution by Location
-- 🏪 Top Risky Merchants Analysis
-- 🔍 Transaction Investigation by Transaction ID
-- 📋 Interactive Transaction Explorer
-- 📥 Downloadable CSV Reports
-- 🎛️ Payment Method & Location Filters
+```text
+Financial-Fraud-Analytics-System/
+│
+├── .devcontainer/
+│   └── devcontainer.json
+│
+├── images/
+│   ├── dashboard-overview-1.png
+│   ├── dashboard-overview-2.png
+│   ├── fraud-analysis.png
+│   ├── login-page.png
+│   ├── transaction-explorer.png
+│   └── transaction-investigation.png
+│
+├── app.py
+├── generate_data.py
+├── requirements.txt
+├── transactions.csv
+└── README.md
+```
 
 ---
 
-# 📸 Application Screenshots
+## 💡 Skills Demonstrated
 
-## 🔐 Login
+- Rule-Based Fraud Detection
+- Risk Score Calculation
+- Data Analysis using Pandas
+- Interactive Dashboard Development
+- Business Intelligence Visualization
+- Data Filtering & Search
+- Streamlit Web Application Development
+- Cloud Deployment
+
+---
+
+# 📸 Application Walkthrough
+
+## Login
+
+Secure login interface for accessing the analytics dashboard.
 
 ![Login](images/login-page.png)
 
 ---
 
-## 📊 Dashboard
+## Dashboard
+
+Provides a consolidated overview of transaction statistics, fraud metrics, risk distribution, and business KPIs.
 
 ![Dashboard Overview](images/dashboard-overview-1.png)
 
@@ -51,25 +103,31 @@ A web-based **Financial Fraud Analytics System** built with **Python** and **Str
 
 ---
 
-## 🚨 Fraud Analysis
+## Fraud Analysis
+
+Displays high-risk transactions, fraud distribution, and location-based fraud insights.
 
 ![Fraud Analysis](images/fraud-analysis.png)
 
 ---
 
-## 📋 Transaction Explorer
+## Transaction Explorer
+
+Allows users to search, filter, and export transaction records for further analysis.
 
 ![Transaction Explorer](images/transaction-explorer.png)
 
 ---
 
-## 🔎 Transaction Investigation
+## Transaction Investigation
+
+Enables detailed investigation of individual transactions using Transaction ID search.
 
 ![Transaction Investigation](images/transaction-investigation.png)
 
 ---
 
-# 🧠 Fraud Detection Logic
+## 🧠 Fraud Detection Logic
 
 Each transaction is evaluated using predefined business rules to calculate a cumulative **Risk Score**.
 
@@ -77,7 +135,7 @@ Each transaction is evaluated using predefined business rules to calculate a cum
 |------|-----------:|
 | Transaction Amount > ₹80,000 | +50 |
 | Credit Card Transaction > ₹50,000 | +30 |
-| Web-Based Transaction | +20 |
+| Web Transaction | +20 |
 | Transaction Outside Trusted Locations | +10 |
 | Late-Night Transaction (1 AM – 4 AM) | +20 |
 
@@ -91,69 +149,34 @@ Each transaction is evaluated using predefined business rules to calculate a cum
 
 ---
 
-# 📊 Dashboard Modules
+## 📈 Key Features
 
-### 📈 Dashboard
-- KPI Overview
-- Fraud Percentage
-- Average Risk Score Gauge
-- Monthly Fraud Trend
-- Transactions by Location
-- Top Risky Merchants
-
-### 🚨 Fraud Analysis
-- High-Risk Transaction Table
-- Fraud Hotspots by Location
-
-### 📋 Transaction Explorer
-- Searchable Transaction Dataset
-- Payment & Location Filters
-- CSV Report Download
-
-### 🔎 Transaction Investigation
-- Search by Transaction ID
-- Detailed Transaction Information
+- Secure login authentication.
+- Rule-based fraud detection engine.
+- Automated transaction risk scoring.
+- Interactive fraud analytics dashboard.
+- Monthly fraud trend visualization.
+- Risky merchant analysis.
+- Location-wise transaction insights.
+- Searchable transaction explorer.
+- Transaction investigation by Transaction ID.
+- CSV report download functionality.
 
 ---
 
-# 🛠️ Technology Stack
+## 🚀 Technical Highlights
 
-| Category | Technologies |
-|----------|--------------|
-| Language | Python |
-| Framework | Streamlit |
-| Data Processing | Pandas |
-| Visualization | Plotly Express, Plotly Graph Objects |
-| Database | MySQL |
-| Data Generation | Faker |
-| Version Control | Git & GitHub |
-| Deployment | Streamlit Community Cloud |
+- Developed a rule-based fraud detection engine using configurable business rules.
+- Built an interactive analytics dashboard with Streamlit and Plotly.
+- Processed and analyzed financial transaction data using Pandas.
+- Implemented transaction search, filtering, and CSV export functionality.
+- Visualized fraud trends, merchant risk, and geographic transaction distribution.
+- Generated synthetic transaction data using Faker for testing and analysis.
+- Deployed the application using Streamlit Community Cloud.
 
 ---
 
-# 📂 Project Structure
-
-```text
-FinancialFraudAnalytics/
-│
-├── app.py
-├── generate_data.py
-├── transactions.csv
-├── requirements.txt
-├── README.md
-│
-└── images/
-    ├── login-page.png
-    ├── dashboard-overview-1.png
-    ├── dashboard-overview-2.png
-    ├── fraud-analysis.png
-    ├── transaction-explorer.png
-    └── transaction-investigation.png
-```
-
----
-
-# 🚀 Run Locally
+## ▶️ Run Locally
 
 ### Clone the repository
 
@@ -173,50 +196,8 @@ cd financial-fraud-analytics-system
 pip install -r requirements.txt
 ```
 
-### Launch the application
+### Run the application
 
 ```bash
 streamlit run app.py
 ```
-
----
-
-# 💡 Highlights
-
-This project demonstrates practical experience with:
-
-- Data Analysis using Pandas
-- Rule-Based Fraud Detection
-- Interactive Dashboard Development
-- Business Intelligence Visualization
-- Streamlit Application Development
-- MySQL Integration
-- Synthetic Data Generation
-- Cloud Deployment
-- GitHub Version Control
-
----
-
-# 🔮 Future Enhancements
-
-- Machine Learning-Based Fraud Prediction
-- Real-Time Transaction Monitoring
-- Interactive Fraud Heat Maps
-- Email & SMS Fraud Alerts
-- User Role & Access Management
-- REST API Integration
-- Advanced Risk Scoring Models
-
----
-
-# 👩‍💻 Author
-
-**Ramya**
-
-**BCA Student | Data Analytics & Business Intelligence**
-
-Focused on building practical data-driven applications using **Python**, **SQL**, **Power BI**, and **Business Intelligence**, with an interest in **Fraud Analytics** and **Cybersecurity**.
-
----
-
-## ⭐ If you found this project interesting, consider giving it a star!
